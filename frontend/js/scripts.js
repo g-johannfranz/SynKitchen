@@ -23,3 +23,25 @@ window.addEventListener("keydown", function (event) {
         closeLogoutModal();
     }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector(".login-form");
+    const leftPanel = document.querySelector(".left-panel");
+    const rightPanel = document.querySelector(".right-panel");
+
+    form.addEventListener("focusin", () => {
+        setTimeout(() => {
+            leftPanel.classList.add("hide");
+            rightPanel.classList.add("center");
+        }, 100);
+    });
+
+    form.addEventListener("focusout", () => {
+        setTimeout(() => {
+            if (!form.contains(document.activeElement)) {
+                leftPanel.classList.remove("hide");
+                rightPanel.classList.remove("center");
+            }
+        }, 500);
+    });
+});

@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+if(!isset($_SESSION['user_id'])){
+    header("Location: login.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,6 +26,5 @@
     <?php include '../includes/footer.php'; ?>
 
     <script src="../frontend/js/scripts.js"></script>
-
 </body>
 </html>
