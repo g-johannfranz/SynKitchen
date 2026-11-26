@@ -48,5 +48,12 @@ if(isset($_SESSION['user_id'])){
     </div>
 
     <script src="../frontend/js/scripts.js"></script>
+
+    <script>
+        if (window.location.search.includes('loggedout=inactive')) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    </script>
+
 </body>
 </html>
