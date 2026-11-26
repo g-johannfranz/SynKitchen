@@ -1,10 +1,7 @@
 <?php
-session_start();
 
-if(!isset($_SESSION['user_id'])){
-    header("Location: login.php");
-    exit();
-}
+require_once '../backend/session_check.php';
+
 ?>
 
 <!DOCTYPE html>
@@ -26,7 +23,7 @@ if(!isset($_SESSION['user_id'])){
     <?php include '../includes/footer.php'; ?>
 
     <script src="../frontend/js/scripts.js"></script>
-    <script src="../frontend/js/inactivity-logout.js"></script>
+    <script src="../frontend/js/inactivity_logout.js"></script>
     
 </body>
 </html>

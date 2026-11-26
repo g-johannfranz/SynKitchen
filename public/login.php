@@ -1,10 +1,23 @@
 <?php
-session_start();
 
-if(isset($_SESSION['user_id'])){
+require_once '../backend/session_config.php';
+
+header("X-Frame-Options: DENY");
+header("X-Content-Type-Options: nosniff");
+header("Referrer-Policy: strict-origin-when-cross-origin");
+
+if (isset($_SESSION['user_id'])) {
     header("Location: dashboard.php");
     exit();
 }
+
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+$error = $_SESSION['error'] ?? '';
+unset($_SESSION['error']);
+
 ?>
 
 <!DOCTYPE html>
@@ -15,45 +28,73 @@ if(isset($_SESSION['user_id'])){
     <title>SynKitchen - Login</title>
     <link rel="stylesheet" href="../frontend/css/styles.css">
 </head>
-
 <body>
 
-    <div class="login-container">
+<div class="login-container">
 
-        <?php include '../includes/left-panel.php'; ?>
+    <?php include '../includes/left-panel.php'; ?>
 
-        <div class="right-panel">
+    <div class="right-panel">
 
-            <form class="login-form" action="../backend/login_process.php" method="POST">
-                <h2>Login</h2>
+        <form
+            class="login-form"
+            action="../backend/login_process.php"
+            method="POST"
+            autocomplete="off"
+        >
 
-                <?php if (isset($_GET['loggedout']) && $_GET['loggedout'] === 'inactive') : ?>
-                    <div class="error">
-                        You have been logged out due to inactivity.
-                    </div>
-                <?php endif; ?>
+            <h2>Login</h2>
 
-                <input type="text" name="username" placeholder="Username" required>
+            <?php if (
+                isset($_GET['loggedout']) &&
+                $_GET['loggedout'] === 'inactive'
+            ): ?>
+                <div class="error">
+                    Your session expired due to inactivity.
+                </div>
+            <?php endif; ?>
 
-                <input type="password" name="password" placeholder="Password" required>
+            <?php if (!empty($error)): ?>
+                <div class="error">
+                    <?= htmlspecialchars($error) ?>
+                </div>
+            <?php endif; ?>
 
-                <button type="submit">Login</button>
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
+            >
 
-                <p class="register-link">
-                No account yet? <a href="register.php">Register an account here.</a>
-                </p>
-            </form>
-        </div>
+            <input
+                type="text"
+                name="username"
+                placeholder="Username"
+                maxlength="50"
+                required
+            >
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                required
+            >
+
+            <button type="submit">Login</button>
+
+            <p class="register-link">
+                No account yet?
+                <a href="register.php">Register an account here.</a>
+            </p>
+
+        </form>
 
     </div>
 
-    <script src="../frontend/js/scripts.js"></script>
+</div>
 
-    <script>
-        if (window.location.search.includes('loggedout=inactive')) {
-        window.history.replaceState({}, document.title, window.location.pathname);
-        }
-    </script>
+<script src="../frontend/js/scripts.js"></script>
 
 </body>
 </html>

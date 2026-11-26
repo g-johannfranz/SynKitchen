@@ -1,16 +1,36 @@
 <?php
 
+mysqli_report(
+    MYSQLI_REPORT_ERROR |
+    MYSQLI_REPORT_STRICT
+);
+
 function loadEnv($path)
 {
     if (!file_exists($path)) {
-        die(".env file not found.");
+        error_log('.env file missing');
+        die('System configuration error.');
     }
 
-    $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    $lines = file(
+        $path,
+        FILE_IGNORE_NEW_LINES |
+        FILE_SKIP_EMPTY_LINES
+    );
 
     foreach ($lines as $line) {
 
-        if (strpos(trim($line), '#') === 0) {
+        $line = trim($line);
+
+        if ($line === '') {
+            continue;
+        }
+
+        if (str_starts_with($line, '#')) {
+            continue;
+        }
+
+        if (!str_contains($line, '=')) {
             continue;
         }
 
@@ -22,15 +42,20 @@ function loadEnv($path)
 
 loadEnv(__DIR__ . '/../.env');
 
-$conn = new mysqli(
-    $_ENV['DB_HOST'],
-    $_ENV['DB_USER'],
-    $_ENV['DB_PASS'],
-    $_ENV['DB_NAME']
-);
+try {
 
-if ($conn->connect_error) {
-    die("Database connection failed.");
+    $conn = new mysqli(
+        $_ENV['DB_HOST'],
+        $_ENV['DB_USER'],
+        $_ENV['DB_PASS'],
+        $_ENV['DB_NAME']
+    );
+
+    $conn->set_charset('utf8mb4');
+
+} catch (Exception $e) {
+
+    error_log($e->getMessage());
+
+    die('Database connection error.');
 }
-
-$conn->set_charset("utf8mb4");

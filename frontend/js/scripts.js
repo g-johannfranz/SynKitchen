@@ -46,3 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+if (window.location.search.includes('loggedout=inactive')) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+}

@@ -1,5 +1,9 @@
 <?php
+
 $currentPage = basename($_SERVER['PHP_SELF']);
+
+$firstName = $_SESSION['first_name'] ?? 'User';
+
 ?>
 
 <header class="main-header">
@@ -28,6 +32,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     </nav>
 
     <div class="logout-container">
+
         <button class="logout-btn" onclick="openLogoutModal()">
             Log Out
         </button>

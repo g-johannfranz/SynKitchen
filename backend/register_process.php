@@ -1,6 +1,6 @@
 <?php
 
-session_start();
+require_once 'session_config.php';
 
 require_once 'db_connection.php';
 
@@ -8,12 +8,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ../public/register.php');
     exit();
 }
-
-/*
-|--------------------------------------------------------------------------
-| CSRF CHECK
-|--------------------------------------------------------------------------
-*/
 
 if (
     !isset($_SESSION['csrf_token']) ||
@@ -23,28 +17,19 @@ if (
         $_POST['csrf_token']
     )
 ) {
-    $_SESSION['error'] = 'Invalid security token.';
+    $_SESSION['error'] =
+        'Invalid security token.';
+
     header('Location: ../public/register.php');
     exit();
 }
 
-/*
-|--------------------------------------------------------------------------
-| SANITIZE
-|--------------------------------------------------------------------------
-*/
-
-$firstName = trim($_POST['first_name']);
-$lastName = trim($_POST['last_name']);
-$username = trim($_POST['username']);
-$password = $_POST['password'];
-$confirmPassword = $_POST['confirm_password'];
-
-/*
-|--------------------------------------------------------------------------
-| VALIDATION
-|--------------------------------------------------------------------------
-*/
+$firstName = trim($_POST['first_name'] ?? '');
+$lastName = trim($_POST['last_name'] ?? '');
+$username = trim($_POST['username'] ?? '');
+$password = $_POST['password'] ?? '';
+$confirmPassword =
+    $_POST['confirm_password'] ?? '';
 
 if (
     empty($firstName) ||
@@ -53,25 +38,59 @@ if (
     empty($password) ||
     empty($confirmPassword)
 ) {
-    $_SESSION['error'] = 'All fields are required.';
+
+    $_SESSION['error'] =
+        'All fields are required.';
+
     header('Location: ../public/register.php');
     exit();
 }
 
-if (!preg_match('/^[a-zA-Z0-9_]{4,30}$/', $username)) {
-    $_SESSION['error'] = 'Invalid username.';
+if (
+    !preg_match(
+        "/^[a-zA-Z\s'-]{1,50}$/",
+        $firstName
+    ) ||
+    !preg_match(
+        "/^[a-zA-Z\s'-]{1,50}$/",
+        $lastName
+    )
+) {
+    $_SESSION['error'] =
+        'Invalid name format.';
+
+    header('Location: ../public/register.php');
+    exit();
+}
+
+if (
+    !preg_match(
+        '/^[a-zA-Z0-9_]{4,30}$/',
+        $username
+    )
+) {
+
+    $_SESSION['error'] =
+        'Invalid username.';
+
     header('Location: ../public/register.php');
     exit();
 }
 
 if ($password !== $confirmPassword) {
-    $_SESSION['error'] = 'Passwords do not match.';
+
+    $_SESSION['error'] =
+        'Passwords do not match.';
+
     header('Location: ../public/register.php');
     exit();
 }
 
 if (strlen($password) < 8) {
-    $_SESSION['error'] = 'Password must be at least 8 characters.';
+
+    $_SESSION['error'] =
+        'Password must be at least 8 characters.';
+
     header('Location: ../public/register.php');
     exit();
 }
@@ -81,38 +100,38 @@ if (
     !preg_match('/[a-z]/', $password) ||
     !preg_match('/[0-9]/', $password)
 ) {
-    $_SESSION['error'] = 'Password must contain uppercase, lowercase, and a number.';
+
+    $_SESSION['error'] =
+        'Password must contain uppercase, lowercase, and a number.';
+
     header('Location: ../public/register.php');
     exit();
 }
 
-/*
-|--------------------------------------------------------------------------
-| CHECK DUPLICATE USERNAME
-|--------------------------------------------------------------------------
-*/
-
 $stmt = $conn->prepare(
-    "SELECT id FROM users WHERE username = ?"
+    "SELECT id
+     FROM users
+     WHERE username = ?"
 );
 
-$stmt->bind_param("s", $username);
+$stmt->bind_param(
+    "s",
+    $username
+);
+
 $stmt->execute();
 $stmt->store_result();
 
 if ($stmt->num_rows > 0) {
-    $_SESSION['error'] = 'Username already exists.';
+
+    $_SESSION['error'] =
+        'Username already exists.';
+
     header('Location: ../public/register.php');
     exit();
 }
 
 $stmt->close();
-
-/*
-|--------------------------------------------------------------------------
-| SAVE USER
-|--------------------------------------------------------------------------
-*/
 
 $hashedPassword = password_hash(
     $password,
@@ -121,8 +140,16 @@ $hashedPassword = password_hash(
 
 $stmt = $conn->prepare(
     "INSERT INTO users
-    (first_name, last_name, username, password)
-    VALUES (?, ?, ?, ?)"
+    (
+        first_name,
+        last_name,
+        username,
+        password
+    )
+    VALUES
+    (
+        ?, ?, ?, ?
+    )"
 );
 
 $stmt->bind_param(
@@ -135,22 +162,20 @@ $stmt->bind_param(
 
 if ($stmt->execute()) {
 
-    unset($_SESSION['csrf_token']);
+    $_SESSION['csrf_token'] =
+        bin2hex(random_bytes(32));
 
     $_SESSION['success'] =
         'Registration successful.';
 
     header('Location: ../public/login.php');
     exit();
-
-} else {
-
-    $_SESSION['error'] =
-        'Registration failed: ' . $stmt->error;
-
-    header('Location: ../public/register.php');
-    exit();
 }
 
-$stmt->close();
-$conn->close();
+error_log($stmt->error);
+
+$_SESSION['error'] =
+    'Registration failed. Please try again.';
+
+header('Location: ../public/register.php');
+exit();

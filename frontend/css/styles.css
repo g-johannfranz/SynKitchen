@@ -79,6 +79,18 @@ main {
     align-items: center;
 }
 
+.current-user {
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
+    line-height: 1.5;
+}
+
+.current-user strong {
+    color: #ffc107;
+    font-size: 16px;
+}
+
 .logout-btn {
     background: #C92424;
     color: white;
@@ -207,6 +219,7 @@ main {
 
 .footer-center {
     text-align: center;
+    line-height: 0.8;
 }
 
 .footer-center p {
@@ -217,9 +230,8 @@ main {
 .footer-right {
     position: absolute;
     right: 25px;
-
+    text-align: right;
     color: #999;
-    font-size: 13px;
 }
 
 /* Login Page Styles */
@@ -424,4 +436,5 @@ main {
     color: #b91c1c;
     padding: 10px;
     border-radius: 5px;
+    font-size: 14px;
 }
