@@ -12,7 +12,7 @@
     <div class="footer-right">
         <span class="current-user">
 
-            Current User:
+            Current User
             <br>
             <strong>
                 <?= htmlspecialchars($firstName) ?>

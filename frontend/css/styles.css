@@ -79,18 +79,6 @@ main {
     align-items: center;
 }
 
-.current-user {
-    font-size: 14px;
-    font-weight: 500;
-    color: #ffffff;
-    line-height: 1.5;
-}
-
-.current-user strong {
-    color: #ffc107;
-    font-size: 16px;
-}
-
 .logout-btn {
     background: #C92424;
     color: white;
@@ -223,7 +211,7 @@ main {
 }
 
 .footer-center p {
-    color: #d6d6d6;
+    color: #999;
     font-size: 14px;
 }
 
@@ -231,7 +219,18 @@ main {
     position: absolute;
     right: 25px;
     text-align: right;
-    color: #999;
+}
+
+.current-user {
+    font-size: 14px;
+    font-weight: 500;
+    color: #d6d6d6;
+    line-height: 1.5;
+    letter-spacing: 0.2px;
+}
+
+.current-user strong {
+    font-size: 16px;
 }
 
 /* Login Page Styles */
@@ -371,6 +370,15 @@ main {
     text-decoration: none;
 }
 
+.error {
+    text-align: center;
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
 /* Register Page Styles */
 
 .register-form {
@@ -430,11 +438,3 @@ main {
     text-decoration: underline;
 }
 
-.error {
-    text-align: center;
-    background: #fee2e2;
-    color: #b91c1c;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 14px;
-}
