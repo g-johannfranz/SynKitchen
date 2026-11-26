@@ -419,7 +419,7 @@ main {
 }
 
 .error {
-
+    text-align: center;
     background: #fee2e2;
     color: #b91c1c;
     padding: 10px;

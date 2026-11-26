@@ -26,6 +26,7 @@ if(!isset($_SESSION['user_id'])){
     <?php include '../includes/footer.php'; ?>
 
     <script src="../frontend/js/scripts.js"></script>
-
+    <script src="../frontend/js/inactivity-logout.js"></script>
+    
 </body>
 </html>

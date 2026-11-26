@@ -27,6 +27,12 @@ if(isset($_SESSION['user_id'])){
             <form class="login-form" action="../backend/login_process.php" method="POST">
                 <h2>Login</h2>
 
+                <?php if (isset($_GET['loggedout']) && $_GET['loggedout'] === 'inactive') : ?>
+                    <div class="error">
+                        You have been logged out due to inactivity.
+                    </div>
+                <?php endif; ?>
+
                 <input type="text" name="username" placeholder="Username" required>
 
                 <input type="password" name="password" placeholder="Password" required>
